@@ -1,0 +1,11 @@
+<!-- inspections/templates/inspections/list_inspections.html -->
+{% extends 'base.html' %}  {# Assuming you have a base template #}
+
+{% block content %}
+<h2>List of Inspections</h2>
+<ul>
+    {% for inspection in inspections %}
+    <li>{{ inspection.vessel.name }} on {{ inspection.date }} by {{ inspection.inspector_name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

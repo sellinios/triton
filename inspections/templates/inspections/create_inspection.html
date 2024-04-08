@@ -1,0 +1,36 @@
+{% extends 'base.html' %}  {# Extend your base layout #}
+
+{% block content %}
+<form method="post" id="inspection-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div id="questions-container"></div>  {# Container for dynamically loaded questions #}
+    <button type="submit">Submit Inspection</button>
+</form>
+
+<script>
+// JavaScript to fetch and display questions when a template is selected
+document.getElementById("id_inspection_template").addEventListener("change", function() {
+    const templateId = this.value;
+    const questionsContainer = document.getElementById("questions-container");
+    fetch(`/get-questions/?template_id=${templateId}`)
+        .then(response => response.json())
+        .then(questions => {
+            questionsContainer.innerHTML = '';  {# Clear previous questions #}
+            questions.forEach(question => {
+                // Assuming each question has 'id', 'text', and 'section__title'
+                const div = document.createElement('div');
+                div.innerHTML = `<strong>${question.section__title}</strong>: ${question.text}`;
+                questionsContainer.appendChild(div);
+
+                // Add form input for each question's response (customize as needed)
+                const input = document.createElement('input');
+                input.type = 'text';  {# Example: text input for response #}
+                input.name = `response_${question.id}`;  {# Ensure the name is unique and meaningful #}
+                questionsContainer.appendChild(input);
+            });
+        })
+        .catch(error => console.error('Error loading questions:', error));
+});
+</script>
+{% endblock %}
